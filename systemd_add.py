@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import subprocess
 import venv
@@ -230,7 +231,7 @@ if check.lower() in accept_value:
 
     
     elif type_check == 2:
-        file_name = input("Enter your shell script name (without '.sh' extension): ")+".py"
+        file_name = input("Enter your shell script name (without '.sh' extension): ")+".sh"
         systemd_name = input("Enter name for your systemd service (without '.service'): ")
         work_dir = workdir()
         user = sel_user()
