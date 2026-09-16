@@ -63,6 +63,29 @@ def cs1_venv(wdir, filename, venv):
         exit()
 
 
+#option2
+def create_shell(fn, sdn, wdir, usr, hprot, sdesc):
+    print(f'Creating {sdn}.service in /etc/systemd/system..')
+    try:
+        with open(f'/etc/systemd/system/{sdn}.service', 'w') as sys:
+            sys.write(f"""[Unit]
+Description={sdesc}\n
+[Service]
+ExecStart=/bin/bash {wdir}/{fn}
+User={usr}
+WorkingDirectory={wdir}
+ProtectHome={hprot}\n
+[Install]
+WantedBy=multi-user.target
+""")
+        print("Done!")
+        print(f"Run post installation commands to enable {sdn}.service to start with system startup:\nsudo chmod 775 -R {wdir}/* -> If it's not executable\nsudo systemctl enable {sdn} -> Enables automatic startup\nsudo systemctl start {sdn} -> Optional (turns on service)\nsudo systemctl daemon-reload -> to reload the daemon\nREMEMBER about Reading/Executing permissions for others If something will not work!")
+
+    except Exception as err:
+        print(f'Error occurred: {err}')
+        exit()
+
+
 #option4
 def create_command(cmd, sdn, wdir, usr, hprot, sdesc):
     print(f'Creating {sdn}.service in /etc/systemd/system..')
@@ -80,7 +103,6 @@ WantedBy=multi-user.target
 """)
         print("Done!")
         print(f"Run post installation commands to enable {sdn}.service to start with system startup:\nsudo chmod 775 -R {wdir}/* -> If it's not executable\nsudo systemctl enable {sdn} -> Enables automatic startup\nsudo systemctl start {sdn} -> Optional (turns on service)\nsudo systemctl daemon-reload -> to reload the daemon\nREMEMBER about Reading/Executing permissions for others If something will not work!")
-
 
     except Exception as err:
         print(f'Error occurred: {err}')
@@ -130,7 +152,7 @@ def sel_user():
         return 'root'
     else:
         return ask
-    
+
 
 #   Home Directory Protection
 def prot_home():
@@ -341,7 +363,7 @@ if check.lower() in accept_value:
                 create_service1(systemd_name, work_dir, user, home_prot, serv_description)
 
             elif type_check == 2:
-                print('placeholder')
+                create_shell(file_name, systemd_name, work_dir, user, home_prot, serv_description)
 
             elif type_check == 3:
                 print('placeholder')
