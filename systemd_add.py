@@ -86,6 +86,29 @@ WantedBy=multi-user.target
         exit()
 
 
+#option3
+def create_py(fn, sdn, wdir, usr, hprot, sdesc, py_path):
+    print(f'Creating {sdn}.service in /etc/systemd/system..')
+    try:
+        with open(f'/etc/systemd/system/{sdn}.service', 'w') as sys:
+            sys.write(f"""[Unit]
+Description={sdesc}\n
+[Service]
+ExecStart={py_path} {wdir}/{fn}
+User={usr}
+WorkingDirectory={wdir}
+ProtectHome={hprot}\n
+[Install]
+WantedBy=multi-user.target
+""")
+        print("Done!")
+        print(f"Run post installation commands to enable {sdn}.service to start with system startup:\nsudo chmod 775 -R {wdir}/* -> If it's not executable\nsudo systemctl enable {sdn} -> Enables automatic startup\nsudo systemctl start {sdn} -> Optional (turns on service)\nsudo systemctl daemon-reload -> to reload the daemon\nREMEMBER about Reading/Executing permissions for others If something will not work!")
+
+    except Exception as err:
+        print(f'Error occurred: {err}')
+        exit()
+
+
 #option4
 def create_command(cmd, sdn, wdir, usr, hprot, sdesc):
     print(f'Creating {sdn}.service in /etc/systemd/system..')
@@ -366,7 +389,7 @@ if check.lower() in accept_value:
                 create_shell(file_name, systemd_name, work_dir, user, home_prot, serv_description)
 
             elif type_check == 3:
-                print('placeholder')
+                create_py(file_name, systemd_name, work_dir, user, home_prot, serv_description, py_path)
 
             elif type_check == 4:
                 create_command(command, systemd_name, work_dir, user, home_prot, serv_description)
